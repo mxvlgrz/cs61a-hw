@@ -27,9 +27,7 @@ def make_adder(n):
     3
     """
     "*** YOUR CODE HERE ***"
-    def adder(k):
-        return n + k
-    return adder
+    return lambda x: n + x
 
 # Q2
 def double_eights(n):
@@ -55,9 +53,7 @@ def double_eights(n):
     "*** YOUR CODE HERE ***"
     if n<10:
         return False
-    if n%100 == 88:
-        return True
-    return double_eights(n // 10)
+    return n%100 == 88 or double_eights(n//10)
 
 # Q3
 def product(n, term):
@@ -82,16 +78,15 @@ def product(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
-    result = 1
-    for i in range(1, n+1):
+    if(n<1):
+        return 0
+    result = term(1)
+    for i in range(2, n+1):
         result = result * term(i)
     return result
 
 # The identity function, defined using a lambda expression!
 identity = lambda k: k
-square = lambda k: k*k
-increment = lambda k: k+1
-triple = lambda k: k*3
 
 def factorial(n):
     """Return n factorial for n >= 0 by calling product.
@@ -105,8 +100,7 @@ def factorial(n):
     True
     """
     "*** YOUR CODE HERE ***"
-    if n==1: return 1
-    return n*factorial(n-1)
+    return product(n, identity)
 
 # Q4
 def summation(n, term):
@@ -128,8 +122,9 @@ def summation(n, term):
     """
     assert n >= 1
     "*** YOUR CODE HERE ***"
-    if n==1: return term(1)
-    return term(n) + summation(n-1)
+    if n==1:
+        return term(1)
+    return term(n) + summation(n-1, term)
 
 # Q5
 def accumulate(combiner, base, n, term):
@@ -151,7 +146,8 @@ def accumulate(combiner, base, n, term):
     "*** YOUR CODE HERE ***"
     if n==0:
         return base
-    return combiner(term(n), accumulate(combiner, base, n-1, term))
+    else:
+        return combiner(term(n), accumulate(combiner, base, n-1, term))
 
 def summation_using_accumulate(n, term):
     """Returns the sum of term(1) + ... + term(n). The implementation
@@ -182,7 +178,7 @@ def product_using_accumulate(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
-    return accumulate(mul, 0, n, term)
+    return accumulate(mul, 1, n, term)
 
 # Q6
 def filtered_accumulate(combiner, base, pred, n, term):
@@ -210,7 +206,7 @@ def filtered_accumulate(combiner, base, pred, n, term):
     """
     def combine_if(x, y):
         "*** YOUR CODE HERE ***"
-        if pred(y):
+        if pred(y) or n==0:
             return combiner(x, y)
         else:
             return x
@@ -246,11 +242,11 @@ def make_repeater(f, n):
     """
     "*** YOUR CODE HERE ***"
     def repeater(x):
-        while(n>0):
+        for i in range(0, n):
             x = f(x)
-            --n
         return x
     return repeater
+
 
 ###################
 # Extra Questions #
@@ -268,5 +264,4 @@ def make_anonymous_factorial():
     >>> check(HW_SOURCE_FILE, 'make_anonymous_factorial', ['Assign', 'AugAssign', 'FunctionDef', 'Recursion'])
     True
     """
-    # retu
-# 10:619926,01:276094,18:483866,07:262346,22:687446,05:199308,20:549318,12:512748,08:399087,23:583185,14:636462,15:649604,16:678205,00:413826,17:571596,13:574252,03:190639,06:216647,21:650632,09:522408,04:189652,11:617090,02:207457,19:510107,13:88,09:4,12:43,07:28,22:20,08:26,14:44,15:10,16:64,00:9,17:1,01:24,18:2,06:32,21:47
+    return lambda x: (1 if x==1 else x*make_anonymous_factorial()(x-1))
