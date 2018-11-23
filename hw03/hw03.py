@@ -23,6 +23,10 @@ def g(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n<=3:
+        return n
+    else:
+        return g(n-1) + 2*g(n-2) + 3*g(n-3)
 
 def g_iter(n):
     """Return the value of G(n), computed iteratively.
@@ -42,6 +46,12 @@ def g_iter(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    if n<=3:
+        return n
+    arr = [1, 2, 3]
+    for i in range(3, n):
+        arr = arr + [(arr[i-1] + 2*arr[i-2] + 3*arr[i-3])]
+    return arr[n-1]
 
 # Q2
 def pingpong(n):
@@ -76,6 +86,28 @@ def pingpong(n):
     True
     """
     "*** YOUR CODE HERE ***"
+    return pingpong_helper(n, 0, True)
+
+
+def pingpong_helper(n, shift, is_incrementing):
+    if n==1:
+        if is_incrementing:
+            return 1-shift
+        else:
+            return 1+shift
+    else:
+        if (n-1)%7==0 or has_seven(n-1):
+            if is_incrementing:
+                return pingpong_helper(n-1, shift-1, False)
+            else:
+                return pingpong_helper(n-1, shift+1, True)
+        else:
+            if is_incrementing:
+                return pingpong_helper(n-1, shift-1, True)
+            else:
+                return pingpong_helper(n-1, shift+1, False)
+
+
 
 def has_seven(k):
     """Returns True if at least one of the digits of k is a 7, False otherwise.
@@ -152,6 +184,13 @@ def move_stack(n, start, end):
     """
     assert 1 <= start <= 3 and 1 <= end <= 3 and start != end, "Bad start/end"
     "*** YOUR CODE HERE ***"
+    if n==1:
+        print_move(start, end)
+    else:
+        helper = 6-(start+end)
+        move_stack(n-1, start, helper)
+        print_move(start, end)
+        move_stack(n-1, helper, end)
 
 # Q5
 def replace_leaf(t, old, new):
@@ -184,7 +223,11 @@ def replace_leaf(t, old, new):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    if is_leaf(t) and label(t)==old:
+        return tree(new)
+    else:
+        return tree(label(t), [replace_leaf(b, old, new) for b in branches(t)])
+    
 # Tree ADT
 def tree(label, branches=[]):
     """Construct a tree with the given label value and a list of branches."""
