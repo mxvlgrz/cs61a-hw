@@ -144,10 +144,12 @@ def accumulate(combiner, base, n, term):
     72
     """
     "*** YOUR CODE HERE ***"
-    if n==0:
-        return base
-    else:
-        return combiner(term(n), accumulate(combiner, base, n-1, term))
+    x, total = 1, base
+    while n>0:
+        total = combiner(total, term(n))
+        n-=1
+    return total
+
 
 def summation_using_accumulate(n, term):
     """Returns the sum of term(1) + ... + term(n). The implementation
@@ -206,7 +208,7 @@ def filtered_accumulate(combiner, base, pred, n, term):
     """
     def combine_if(x, y):
         "*** YOUR CODE HERE ***"
-        if pred(y) or n==0:
+        if pred(y):
             return combiner(x, y)
         else:
             return x
