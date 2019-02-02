@@ -216,6 +216,13 @@ def add_d_leaves(t, v):
         10
     """
     "*** YOUR CODE HERE ***"
+    add_d_leaves_by_depth(t, v, 0)
+
+def add_d_leaves_by_depth(t, v, d):
+    for b in t.branches:
+        add_d_leaves_by_depth(b, v, d+1)
+    for _ in range(d):
+        t.branches += [Tree(v, [])]
     
 
 class Tree:
@@ -315,6 +322,14 @@ def make_counter():
     5
     """
     "*** YOUR CODE HERE ***"
+    str_dict = {}
+    def counter(str):
+        nonlocal str_dict
+        if not str in str_dict:
+            str_dict[str] = 0
+        str_dict[str] += 1 
+        return str_dict[str]
+    return counter
 
 def make_withdraw(balance, password):
     """Return a password-protected withdraw function.
@@ -345,6 +360,19 @@ def make_withdraw(balance, password):
     True
     """
     "*** YOUR CODE HERE ***"
+    attempts = []
+    def withdraw(amount, input_pwd):
+        nonlocal balance, password, attempts
+        if len(attempts) >= 3:
+            return "Your account is locked. Attempts: ['%s', '%s', '%s']" % (attempts[0], attempts[1], attempts[2])
+        if input_pwd != password:
+            attempts += [ input_pwd ]
+            return "Incorrect password"
+        if balance < amount:
+            return "Insufficient funds"
+        balance -= amount
+        return balance
+    return withdraw
 
 def make_joint(withdraw, old_password, new_password):
     """Return a password-protected withdraw function that has joint access to
@@ -385,6 +413,16 @@ def make_joint(withdraw, old_password, new_password):
     "Your account is locked. Attempts: ['my', 'secret', 'password']"
     """
     "*** YOUR CODE HERE ***"
+    verification = withdraw(0, old_password)
+    if type(verification) is str:
+        return verification
+    def joint_account(balance, password):
+        nonlocal withdraw, new_password, old_password
+        if password == new_password:
+            return withdraw(balance, old_password)
+        return withdraw(balance, password)
+    return joint_account
+
 
 ###################
 # Extra questions #
@@ -414,9 +452,13 @@ class Fib():
 
     def __init__(self, value=0):
         self.value = value
+        self.next_value = 1
 
     def next(self):
         "*** YOUR CODE HERE ***"
+        rst = Fib()
+        rst.value, rst.next_value = self.next_value, (self.value + self.next_value)
+        return rst
 
     def __repr__(self):
         return str(self.value)
